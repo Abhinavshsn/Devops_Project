@@ -1,0 +1,95 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tools-ingress
+  namespace: ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: selfsigned-cluster-issuer
+spec:
+  tls:
+    - hosts:
+        - jenkins.com
+      secretName: jenkins-tls
+    - hosts:
+        - argocd.com
+      secretName: argocd-tls
+    - hosts:
+        - prometheus.com
+      secretName: prometheus-tls
+    - hosts:
+        - grafana.com
+      secretName: grafana-tls
+    - hosts:
+        - loki.com
+      secretName: loki-tls
+    - hosts:
+        - kyverno.com
+      secretName: kyverno-tls
+  rules:
+    - host: jenkins.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: jenkins
+                namespace: cicd
+                port:
+                  number: 8080
+    - host: argocd.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argo-cd-server
+                namespace: cicd
+                port:
+                  number: 80
+    - host: prometheus.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kube-prometheus-stack-prometheus
+                namespace: monitoring
+                port:
+                  number: 9090
+    - host: grafana.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                namespace: monitoring
+                port:
+                  number: 3000
+    - host: loki.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: loki
+                namespace: logging
+                port:
+                  number: 3100
+    - host: kyverno.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kyverno-svc
+                namespace: security
+                port:
+                  number: 443
