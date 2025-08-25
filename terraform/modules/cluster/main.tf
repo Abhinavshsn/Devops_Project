@@ -39,3 +39,9 @@ resource "kind_cluster" "default" {
     node { role = "worker" }
   }
 }
+
+resource "local_file" "kubeconfig" {
+  content  = kind_cluster.default.kubeconfig_raw
+  filename = "${path.module}/.kubeconfig.yaml"
+  depends_on = [kind_cluster.default]
+}
