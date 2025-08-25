@@ -13,7 +13,7 @@ resource "kind_cluster" "default" {
   name            = "devops-project"
   node_image      = "kindest/node:v1.27.1"
   wait_for_ready  = true
-
+  kubeconfig_path = pathexpand("/tmp/kind-devops-project.yaml")
   kind_config {
     kind        = "Cluster"
     api_version = "kind.x-k8s.io/v1alpha4"
