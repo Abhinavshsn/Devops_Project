@@ -164,7 +164,3 @@ resource "kubernetes_manifest" "tools_ingress" {
   ]
 }
 
-resource "kubernetes_manifest" "tools_ingress" {
-  manifest = yamldecode(file("${path.module}/tools-ingress.yaml"))
-  depends_on = [helm_release.nginx_ingress]
-}
