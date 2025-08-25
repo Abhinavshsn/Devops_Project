@@ -145,23 +145,7 @@ resource "helm_release" "cert_manager" {
 }
 
 
-#################################
-# Let's encrypt ClusterIssuer
-#################################
-resource "kubernetes_manifest" "selfsigned_clusterissuer" {
-  manifest = yamldecode(<<YAML
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: selfsigned-cluster-issuer
-spec:
-  selfSigned: {}
-YAML
-  )
-  depends_on = [
-    helm_release.cert_manager  # cert-manager Helm release
-  ]
-}
+
 
 #################################
 # TOOLS INGRESS WITH TLS
@@ -170,8 +154,7 @@ resource "kubernetes_manifest" "tools_ingress" {
   manifest   = yamldecode(file("${path.module}/tools-ingress.yaml"))
   depends_on = [
     helm_release.nginx_ingress,
-    helm_release.cert_manager,
-    kubernetes_manifest.selfsigned_clusterissuer
+    helm_release.cert_manager
   ]
 }
 

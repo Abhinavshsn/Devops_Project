@@ -12,4 +12,10 @@ nodes:
   - role: worker
 
   #Usage kind create cluster --name devops-project --config kind-config.yaml
+  #kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.2/cert-manager.crds.yaml
+  #kubectl create namespace security   # matches your Terraform namespace
+  #helm repo add jetstack https://charts.jetstack.io
+  #helm repo update
+  #helm install cert-manager jetstack/cert-manager --namespace security --set installCRDs=true
+
 
