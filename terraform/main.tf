@@ -1,11 +1,4 @@
 # ---------------------
-# Cluster
-# ---------------------
-module "cluster" {
-  source = "./modules/cluster"
-}
-
-# ---------------------
 # Namespaces
 # ---------------------
 module "namespaces" {
