@@ -12,7 +12,6 @@ provider "kind" {}
 resource "kind_cluster" "default" {
   name            = "devops-project"
   node_image      = "kindest/node:v1.27.1"
-  kubeconfig_path = pathexpand("/tmp/config")
   wait_for_ready  = true
 
   kind_config {
