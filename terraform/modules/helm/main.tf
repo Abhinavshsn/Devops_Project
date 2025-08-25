@@ -10,7 +10,7 @@ resource "helm_release" "jenkins" {
   create_namespace = false
   wait             = true
   timeout          = 600
-  depends_on = [provider.kubernetes, provider.helm]
+  
 }
 
 resource "helm_release" "argocd" {
@@ -22,7 +22,7 @@ resource "helm_release" "argocd" {
   create_namespace = false
   wait             = true
   timeout          = 600
-  depends_on = [provider.kubernetes, provider.helm]
+  
 }
 
 #################################
@@ -37,7 +37,7 @@ resource "helm_release" "kube_prometheus_stack" {
   create_namespace = false
   wait             = true
   timeout          = 600
-  depends_on = [provider.kubernetes, provider.helm]
+  
 }
 
 resource "helm_release" "grafana" {
@@ -49,7 +49,7 @@ resource "helm_release" "grafana" {
   create_namespace = false
   wait             = true
   timeout          = 600
-  depends_on = [provider.kubernetes, provider.helm]
+  
 }
 
 #################################
@@ -64,7 +64,7 @@ resource "helm_release" "loki" {
   create_namespace = false
   wait             = true
   timeout          = 600
-  depends_on = [provider.kubernetes, provider.helm]
+  
 }
 
 resource "helm_release" "promtail" {
@@ -76,7 +76,7 @@ resource "helm_release" "promtail" {
   create_namespace = false
   wait             = true
   timeout          = 600
-  depends_on = [provider.kubernetes, provider.helm]
+  
 }
 
 #################################
@@ -91,7 +91,7 @@ resource "helm_release" "kyverno" {
   create_namespace = false
   wait             = true
   timeout          = 600
-  depends_on = [provider.kubernetes, provider.helm]
+  
 }
 
 #################################
@@ -106,7 +106,7 @@ resource "helm_release" "nginx_ingress" {
   create_namespace = false
   wait             = true
   timeout          = 600
-  depends_on = [provider.kubernetes, provider.helm]
+  
 }
 
 #################################
@@ -121,7 +121,7 @@ resource "helm_release" "linkerd" {
   create_namespace = false
   wait             = true
   timeout          = 600
-  depends_on = [provider.kubernetes, provider.helm]
+  
 }
 
 #################################
@@ -136,7 +136,7 @@ resource "helm_release" "cert_manager" {
   create_namespace = true
   wait             = true
   timeout          = 600
-  depends_on = [provider.kubernetes, provider.helm]
+  
 
   values = [
     yamlencode({
