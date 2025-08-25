@@ -18,12 +18,14 @@ terraform {
 provider "kind" {}
 
 provider "kubernetes" {
-  config_path = kind_cluster.default.kubeconfig_path
+  config_path = local_file.kubeconfig.filename
+  depends_on  = [local_file.kubeconfig]
 }
 
 provider "helm" {
   kubernetes {
-    config_path = kind_cluster.default.kubeconfig_path
+    config_path = local_file.kubeconfig.filename
+    depends_on  = [local_file.kubeconfig]
   }
 }
 
