@@ -160,8 +160,7 @@ spec:
 YAML
   )
   depends_on = [
-    helm_release.cert_manager,  # cert-manager Helm release
-    provider.kubernetes         # ensure Kubernetes provider is ready
+    helm_release.cert_manager  # cert-manager Helm release
   ]
 }
 
@@ -173,8 +172,7 @@ resource "kubernetes_manifest" "tools_ingress" {
   depends_on = [
     helm_release.nginx_ingress,
     helm_release.cert_manager,
-    kubernetes_manifest.selfsigned_clusterissuer,
-    provider.kubernetes
+    kubernetes_manifest.selfsigned_clusterissuer
   ]
 }
 
