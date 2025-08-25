@@ -9,7 +9,7 @@ variable "namespaces" {
   default = {
     cicd = {                                           #this is the key and description,purpose and linkerd are values
       description = "Namespace for Jenkins and ArgoCD"
-      purpose     = "CI/CD workloads"
+      purpose     = "CI/CDWorkloads"
       linkerd     = "disabled"
     }
     monitoring = {
@@ -19,27 +19,27 @@ variable "namespaces" {
     }
     logging = {
       description = "Namespace for Loki"
-      purpose     = "Centralized Logging"
+      purpose     = "CentralizedLogging"
       linkerd     = "disabled"
     }
     security = {
       description = "Namespace for Kyverno"
-      purpose     = "Secrets Management"
+      purpose     = "SecretsManagement"
       linkerd     = "disabled"
     }
     ingress = {
       description = "Namespace for NGINX ingress controller"
-      purpose     = "Ingress management"
+      purpose     = "IngressManagement"
       linkerd     = "disabled"
     }
     linkerd = {
       description = "Namespace for Linkerd control plane"
-      purpose     = "Service Mesh"
+      purpose     = "ServiceMesh"
       linkerd     = "system"
     }
     apps = {
       description = "Namespace for sample/demo apps"
-      purpose     = "Application workloads"
+      purpose     = "ApplicationWorkloads"
       linkerd     = "enabled"
     }
   }
