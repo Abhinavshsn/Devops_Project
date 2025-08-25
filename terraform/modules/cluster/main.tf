@@ -1,14 +1,25 @@
+terraform {
+  required_providers {
+    kind = {
+      source  = "tehcyx/kind"
+      version = ">= 0.5.1"
+    }
+  }
+}
+
+provider "kind" {}
+
 resource "kind_cluster" "default" {
   name            = "devops-project"
   node_image      = "kindest/node:v1.27.1"
   kubeconfig_path = pathexpand("/tmp/config")
   wait_for_ready  = true
 
-  kind_config {                                #Similar to how you write yaml to create cluster with nodes but in hcl language
+  kind_config {
     kind        = "Cluster"
     api_version = "kind.x-k8s.io/v1alpha4"
 
-    # Control plane node with ingress ports(http on 80 and https on 443)
+    # Control plane node with ingress ports (HTTP 80 / HTTPS 443)
     node {
       role = "control-plane"
 
@@ -21,19 +32,11 @@ resource "kind_cluster" "default" {
         container_port = 443
         host_port      = 443
       }
-      
-
     }
 
-    # Worker nodes (no port mappings needed)
-    node {
-      role = "worker"
-    }
-    node {
-      role = "worker"
-    }
-    node {
-      role = "worker"
-    }
+    # Worker nodes
+    node { role = "worker" }
+    node { role = "worker" }
+    node { role = "worker" }
   }
 }
