@@ -9,7 +9,7 @@ variable "namespaces" {
   default = {
     cicd = {                                           #this is the key and description,purpose and linkerd are values
       description = "Namespace for Jenkins and ArgoCD"
-      purpose     = "CI/CDWorkloads"
+      purpose     = "CICDWorkloads"
       linkerd     = "disabled"
     }
     monitoring = {

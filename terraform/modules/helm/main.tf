@@ -138,11 +138,10 @@ resource "helm_release" "cert_manager" {
   timeout          = 600
   
 
-  values = [
-    yamlencode({
-      installCRDs = true
-    })
-  ]
+  set {
+    name  = "installCRDs"
+    value = "true"
+  }
 }
 
 
