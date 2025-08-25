@@ -17,16 +17,8 @@ terraform {
 
 provider "kind" {}
 
-provider "kubernetes" {
-  config_path = local_file.kubeconfig.filename
-  depends_on  = [local_file.kubeconfig]
-}
+provider "kubernetes" {}
 
-provider "helm" {
-  kubernetes {
-    config_path = local_file.kubeconfig.filename
-    depends_on  = [local_file.kubeconfig]
-  }
-}
+provider "helm" {}
 
 
