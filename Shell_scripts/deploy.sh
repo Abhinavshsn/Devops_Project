@@ -150,7 +150,8 @@ kubectl apply -f https://raw.githubusercontent.com/kubeshark/kubeshark/master/ma
 
 # Wait for Kubeshark pods in the correct namespace
 echo "[INFO] Waiting for Kubeshark pods to be ready..."
-kubectl wait --for=condition=ready pod --all -n kubeshark --timeout=300s
+sleep 10
+kubectl wait --for=condition=available deployment -n kubeshark --all --timeout=300s
 
 
 
