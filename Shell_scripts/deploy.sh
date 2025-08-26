@@ -160,6 +160,9 @@ fi
 # Validate cluster pre-install
 linkerd check --pre || true
 
+# Install Gateway API CRDs required by Linkerd
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.1/standard-install.yaml
+
 # Install Linkerd CRDs first
 linkerd install --crds | kubectl apply -f -
 
