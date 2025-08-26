@@ -35,25 +35,18 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
   - role: control-plane
-    resources:
-      cpu: "1"
-      memory: "2GB"
   - role: worker
-    resources:
-      cpu: "1"
-      memory: "2GB"
   - role: worker
-    resources:
-      cpu: "1"
-      memory: "2GB"
+
 EOF
 
 
 echo "[INFO] Creating Kind cluster..."
 kind create cluster --name $CLUSTER_NAME --config $KIND_CONFIG_FILE || echo "[INFO] Cluster may already exist"
-kubectl label node devops-project-worker monitoring=true
-kubectl label node devops-project-worker2 cicd=true
-kubectl label node devops-project-worker3 application=true
+kubectl label node devops-cluster-worker monitoring=true
+kubectl label node devops-cluster-worker2 cicd=true
+kubectl label node devops-cluster-worker3 application=true
+
 
 # CREATE NAMESPACES
 for ns in "${NAMESPACES[@]}"; do
