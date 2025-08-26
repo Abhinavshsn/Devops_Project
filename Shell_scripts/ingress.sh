@@ -77,3 +77,21 @@ for tool in "${TOOLS[@]}"; do
   echo "127.0.0.1 $subdomain.$DOMAIN_SUFFIX"
 done
 echo "[INFO] Access your tools via https://<subdomain>.$DOMAIN_SUFFIX"
+
+#Later change the controller from clusterip to nodeport
+#kubectl patch svc nginx-ingress-ingress-nginx-controller   -n network   -p '{"spec": {"type": "NodePort"}}'
+
+#EVen after this i am unable to access URLs from web browser,but i can ping from ubuntu but not from command prompt of windows.
+#You can use port forwarding which is working fine
+# Jenkins
+#kubectl port-forward svc/jenkins 8080:8080 -n cicd &
+
+# ArgoCD
+#kubectl port-forward svc/argo-argocd-server 8081:80 -n cicd &
+
+# Grafana
+#kubectl port-forward svc/grafana 3000:80 -n monitoring &
+
+# Prometheus
+#kubectl port-forward svc/prometheus-server 9090:80 -n monitoring &
+
