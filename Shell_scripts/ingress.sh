@@ -78,7 +78,7 @@ for tool in "${TOOLS[@]}"; do
 done
 echo "[INFO] Access your tools via https://<subdomain>.$DOMAIN_SUFFIX"
 
-#Later change the controller from clusterip to nodeport and run the .ps1 script to add the port forwarding rules in windows firewall
+#Later change the controller from clusterip to nodeport and run the .ps1 script to add the port forwarding rules in windows firewall get the ports by kubectl get svc -n netowork
 #kubectl patch svc nginx-ingress-ingress-nginx-controller   -n network   -p '{"spec": {"type": "NodePort"}}'
 
 #EVen after this i am unable to access URLs from web browser,but i can ping from ubuntu but not from command prompt of windows.
