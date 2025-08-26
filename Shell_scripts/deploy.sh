@@ -42,6 +42,9 @@ EOF
 
 echo "[INFO] Creating Kind cluster..."
 kind create cluster --name $CLUSTER_NAME --config $KIND_CONFIG_FILE || echo "[INFO] Cluster may already exist"
+kubectl label node devops-project-worker monitoring=true
+kubectl label node devops-project-worker2 cicd=true
+kubectl label node devops-project-worker3 application=true
 
 # CREATE NAMESPACES
 for ns in "${NAMESPACES[@]}"; do
@@ -63,22 +66,26 @@ echo "[INFO] Installing tools..."
 # CICD
 helm upgrade --install jenkins jenkins/jenkins --namespace cicd \
     --set persistence.existingClaim="" \
-    --set persistence.mountPath="$VOLUME_DIR/jenkins"
+    --set persistence.mountPath="$VOLUME_DIR/jenkins" \
+    --set nodeSelector.cicd=true
 
 helm upgrade --install argo argo/argo-cd --namespace cicd \
     --set server.extraVolumeMounts[0].mountPath="$VOLUME_DIR/argocd" \
     --set server.extraVolumeMounts[0].name="argocd-data" \
     --set server.extraVolumes[0].name="argocd-data" \
-    --set server.extraVolumes[0].hostPath.path="$VOLUME_DIR/argocd"
+    --set server.extraVolumes[0].hostPath.path="$VOLUME_DIR/argocd" \
+    --set nodeSelector.cicd=true
 
 # MONITORING
 helm upgrade --install prometheus prometheus-community/prometheus --namespace monitoring \
   --set server.persistentVolume.existingClaim="" \
-  --set server.persistentVolume.mountPath="$VOLUME_DIR/prometheus"
+  --set server.persistentVolume.mountPath="$VOLUME_DIR/prometheus" \
+  --set nodeSelector.monitoring=true
 
 helm upgrade --install grafana grafana/grafana --namespace monitoring \
   --set persistence.existingClaim="" \
-  --set persistence.mountPath="$VOLUME_DIR/grafana"
+  --set persistence.mountPath="$VOLUME_DIR/grafana" \
+  --set nodeSelector.monitoring=true
 
 helm upgrade --install loki grafana/loki-stack --namespace monitoring \
   --set persistence.enabled=true \
@@ -87,7 +94,8 @@ helm upgrade --install loki grafana/loki-stack --namespace monitoring \
   --set promtail.extraVolumes[0].name="promtail-data" \
   --set promtail.extraVolumes[0].hostPath.path="$VOLUME_DIR/promtail" \
   --set promtail.extraVolumeMounts[0].name="promtail-data" \
-  --set promtail.extraVolumeMounts[0].mountPath="$VOLUME_DIR/promtail"
+  --set promtail.extraVolumeMounts[0].mountPath="$VOLUME_DIR/promtail" \
+  --set nodeSelector.monitoring=true
 
 # SECURITY
 helm upgrade --install kyverno kyverno/kyverno --namespace security \
