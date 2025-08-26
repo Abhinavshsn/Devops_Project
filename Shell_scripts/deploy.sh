@@ -85,12 +85,6 @@ helm upgrade --install loki grafana/loki-stack --namespace monitoring \
 helm upgrade --install kyverno kyverno/kyverno --namespace security \
     --set persistence.mountPath="$VOLUME_DIR/kyverno"
 
-# SERVICE MESH
-helm upgrade --install linkerd linkerd/linkerd2 --namespace service
-
-# Enable Linkerd only in application namespace
-kubectl label namespace application linkerd.io/inject=enabled --overwrite
-
 # NETWORK
 helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx --namespace network \
     --set controller.extraVolumeMounts[0].mountPath="$VOLUME_DIR/nginx" \
@@ -101,8 +95,34 @@ helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx --namespace net
 # INSPECTION
 kubectl apply -f https://kubeshark.github.io/kubeshark/kubeshark.yaml -n inspection
 
-# APPLICATION
-kubectl apply -f $VOLUME_DIR/my-java-app/deployment.yaml -n application
+# -------------------------
+# SERVICE MESH: Linkerd CLI
+# -------------------------
+echo "[INFO] Installing Linkerd via CLI..."
+
+# Install Linkerd CLI if not already installed
+if ! command -v linkerd &> /dev/null; then
+    echo "[INFO] Installing Linkerd CLI..."
+    curl -sL https://run.linkerd.io/install | sh
+    export PATH=$PATH:$HOME/.linkerd2/bin
+else
+    echo "[INFO] Linkerd CLI already installed"
+fi
+
+# Validate cluster pre-install
+linkerd check --pre || true
+
+# Install Linkerd control plane
+linkerd install | kubectl apply -f -
+
+# Wait for control plane to be ready
+echo "[INFO] Waiting for Linkerd control plane to be ready..."
+kubectl -n linkerd wait --for=condition=available deployment --all --timeout=300s
+
+# Enable Linkerd injection only in application namespace
+kubectl label namespace application linkerd.io/inject=enabled --overwrite
+
+echo "[INFO] Linkerd installation and namespace injection completed"
 
 echo "[INFO] All tools deployed successfully!"
 echo "[INFO] KIND cluster is ready. Use 'kubectl get all -A' to see resources."
