@@ -22,10 +22,8 @@ declare -A TOOLS #Associative array with key as namespace and value as space-sep
 TOOLS=( 
     ["cicd"]="jenkins argo"
     ["monitoring"]="prometheus grafana loki node-exporter"
-    ["security"]="kyverno"
     ["service"]="linkerd"
     ["network"]="nginx-ingress"
-    ["inspection"]="kubeshark"
     ["application"]="my-java-app"
 )
 
@@ -35,6 +33,7 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
   - role: control-plane
+  - role: worker
   - role: worker
   - role: worker
 
