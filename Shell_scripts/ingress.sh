@@ -36,7 +36,7 @@ EOF
   sleep 10
 done
 
-echo "[INFO] Creating Ingress resources for selected tools..."
+echo "[INFO] Creating Ingress resources for selected tools...You justinstalled ingress resource using helm.Below is like a routetable which you need to configure"
 
 for tool in "${TOOLS[@]}"; do
   IFS='|' read -r namespace svc_name subdomain <<< "$tool"
@@ -78,20 +78,6 @@ for tool in "${TOOLS[@]}"; do
 done
 echo "[INFO] Access your tools via https://<subdomain>.$DOMAIN_SUFFIX"
 
-#Later change the controller from clusterip to nodeport and run the .ps1 script to add the port forwarding rules in windows firewall get the ports by kubectl get svc -n netowork
-#kubectl patch svc nginx-ingress-ingress-nginx-controller   -n network   -p '{"spec": {"type": "NodePort"}}'
 
-#EVen after this i am unable to access URLs from web browser,but i can ping from ubuntu but not from command prompt of windows.
-#You can use port forwarding which is working fine
-# Jenkins
-#kubectl port-forward svc/jenkins 8080:8080 -n cicd &
 
-# ArgoCD
-#kubectl port-forward svc/argo-argocd-server 8081:80 -n cicd &
-
-# Grafana
-#kubectl port-forward svc/grafana 3000:80 -n monitoring &
-
-# Prometheus
-#kubectl port-forward svc/prometheus-server 9090:80 -n monitoring &
 
