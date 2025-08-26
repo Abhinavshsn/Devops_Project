@@ -69,7 +69,7 @@ echo "[INFO] Installing tools..."
 helm upgrade --install jenkins jenkins/jenkins --namespace cicd \
     --set persistence.existingClaim="" \
     --set persistence.mountPath="$VOLUME_DIR/jenkins" \
-    --set nodeSelector.cicd=true \
+    --set nodeSelector.cicd="true" \
     --set resources.requests.cpu="250m" \
     --set resources.requests.memory="512Mi" \
     --set resources.limits.cpu="500m" \
@@ -80,7 +80,7 @@ helm upgrade --install argo argo/argo-cd --namespace cicd \
     --set server.extraVolumeMounts[0].name="argocd-data" \
     --set server.extraVolumes[0].name="argocd-data" \
     --set server.extraVolumes[0].hostPath.path="$VOLUME_DIR/argocd" \
-    --set nodeSelector.cicd=true \
+    --set nodeSelector.cicd="true" \
     --set server.resources.requests.cpu="100m" \
     --set server.resources.requests.memory="256Mi" \
     --set server.resources.limits.cpu="250m" \
@@ -90,7 +90,7 @@ helm upgrade --install argo argo/argo-cd --namespace cicd \
 helm upgrade --install prometheus prometheus-community/prometheus --namespace monitoring \
   --set server.persistentVolume.existingClaim="" \
   --set server.persistentVolume.mountPath="$VOLUME_DIR/prometheus" \
-  --set nodeSelector.monitoring=true \
+  --set nodeSelector.monitoring="true" \
   --set server.resources.requests.cpu="250m" \
   --set server.resources.requests.memory="512Mi" \
   --set server.resources.limits.cpu="500m" \
@@ -99,7 +99,7 @@ helm upgrade --install prometheus prometheus-community/prometheus --namespace mo
 helm upgrade --install grafana grafana/grafana --namespace monitoring \
   --set persistence.existingClaim="" \
   --set persistence.mountPath="$VOLUME_DIR/grafana" \
-  --set nodeSelector.monitoring=true \
+  --set nodeSelector.monitoring="true" \
   --set resources.requests.cpu="100m" \
   --set resources.requests.memory="256Mi" \
   --set resources.limits.cpu="250m" \
@@ -113,7 +113,7 @@ helm upgrade --install loki grafana/loki-stack --namespace monitoring \
   --set promtail.extraVolumes[0].hostPath.path="$VOLUME_DIR/promtail" \
   --set promtail.extraVolumeMounts[0].name="promtail-data" \
   --set promtail.extraVolumeMounts[0].mountPath="$VOLUME_DIR/promtail" \
-  --set nodeSelector.monitoring=true \
+  --set nodeSelector.monitoring="true" \
   --set loki.resources.requests.cpu="200m" \
   --set loki.resources.requests.memory="512Mi" \
   --set loki.resources.limits.cpu="400m" \
