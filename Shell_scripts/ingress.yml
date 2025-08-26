@@ -1,0 +1,61 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: devops-ingress
+  namespace: network
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: grafana.localdev.me
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 80
+  - host: prometheus.localdev.me
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: prometheus-server
+            port:
+              number: 80
+  - host: argocd.localdev.me
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argo-argocd-server
+            port:
+              number: 80
+  - host: jenkins.localdev.me
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: jenkins
+            port:
+              number: 8080
+
+#kubectl apply -f ingress.yaml
+#sudo nano /etc/hosts
+#127.0.0.1 grafana.localdev.me prometheus.localdev.me argocd.localdev.me jenkins.localdev.me
+#Grafana → http://grafana.localdev.me:30080
+
+#Prometheus → http://prometheus.localdev.me:30080
+
+#ArgoCD → http://argocd.localdev.me:30080
+
+#Jenkins → http://jenkins.localdev.me:30080

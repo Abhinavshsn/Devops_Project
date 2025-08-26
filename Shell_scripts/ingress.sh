@@ -5,27 +5,19 @@ set -e
 NAMESPACE_INGRESS="network"
 INGRESS_CLASS="nginx"
 CERT_MANAGER_NAMESPACE="cert-manager"
-DOMAIN="localdevops.test"   # replace with your domain for HTTPS
+DOMAIN_SUFFIX="devops.com"   # Main domain suffix for all tools
 
-# TOOLS with namespace, service name, and path
+# TOOL mapping: namespace|service|subdomain
 TOOLS=(
-  "cicd|jenkins|/jenkins"
-  "cicd|argo-cd-server|/argocd"
-  "monitoring|prometheus-server|/prometheus"
-  "monitoring|grafana|/grafana"
-  "monitoring|loki|/loki"
-  "monitoring|prometheus-node-exporter|/node-exporter"
-  "security|kyverno|/kyverno"
-  "service|linkerd-web|/linkerd"
-  "inspection|kubeshark|/kubeshark"
-  "application|my-java-app|/my-java-app"
+  "cicd|jenkins|jenkins"
+  "cicd|argo-argocd-server|argocd"
+  "monitoring|grafana|grafana"
+  "monitoring|prometheus-server|prometheus"
 )
 
 echo "[INFO] Installing cert-manager..."
 kubectl create namespace $CERT_MANAGER_NAMESPACE || true
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
-
-# Wait for cert-manager pods to be ready
 kubectl wait --for=condition=available --timeout=180s deployment -n $CERT_MANAGER_NAMESPACE --all
 
 echo "[INFO] Creating ClusterIssuer for self-signed certs..."
@@ -38,10 +30,11 @@ spec:
   selfSigned: {}
 EOF
 
-echo "[INFO] Creating Ingress resources for all tools..."
+echo "[INFO] Creating Ingress resources for selected tools..."
 
 for tool in "${TOOLS[@]}"; do
-  IFS='|' read -r namespace svc_name path <<< "$tool"
+  IFS='|' read -r namespace svc_name subdomain <<< "$tool"
+  host="$subdomain.$DOMAIN_SUFFIX"
 
   cat <<EOF | kubectl apply -n $namespace -f -
 apiVersion: networking.k8s.io/v1
@@ -53,24 +46,28 @@ metadata:
     cert-manager.io/cluster-issuer: "selfsigned-issuer"
 spec:
   rules:
-  - host: $DOMAIN
+  - host: $host
     http:
       paths:
-      - path: $path
+      - path: /
         pathType: Prefix
         backend:
           service:
             name: $svc_name
             port:
-              number: 80
+              number: $(kubectl get svc $svc_name -n $namespace -o jsonpath='{.spec.ports[0].port}')
   tls:
   - hosts:
-    - $DOMAIN
-    secretName: ${svc_name}-tls
+    - $host
+    secretName: ${subdomain}-tls
 EOF
 
 done
 
 echo "[INFO] All Ingress resources created successfully!"
-echo "[INFO] Add to /etc/hosts: 127.0.0.1 $DOMAIN"
-echo "[INFO] Access your tools via https://$DOMAIN/<tool-path>"
+echo "[INFO] Update /etc/hosts with:"
+for tool in "${TOOLS[@]}"; do
+  IFS='|' read -r _ _ subdomain <<< "$tool"
+  echo "127.0.0.1 $subdomain.$DOMAIN_SUFFIX"
+done
+echo "[INFO] Access your tools via https://<subdomain>.$DOMAIN_SUFFIX"
