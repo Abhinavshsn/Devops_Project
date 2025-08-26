@@ -103,7 +103,8 @@ helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx --namespace net
 # INSPECTION: Kubeshark
 echo "[INFO] Installing Kubeshark..."
 export KUBESHARK_TAG=v52.8.0  # update version if needed
-kubectl apply -f https://raw.githubusercontent.com/kubeshark/kubeshark/refs/$KUBESHARK_TAG/manifests/complete.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubeshark/kubeshark/master/manifests/complete.yaml
+
 
 # Wait for Kubeshark pods to be ready
 echo "[INFO] Waiting for Kubeshark pods to be ready..."
