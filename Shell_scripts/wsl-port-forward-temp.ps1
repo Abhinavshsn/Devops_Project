@@ -28,4 +28,6 @@ Register-EngineEvent PowerShell.Exiting -Action {
     }
 } | Out-Null
 
+#Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
 #.\wsl-port-forward-temp.ps1 -Ports 31462,32338
