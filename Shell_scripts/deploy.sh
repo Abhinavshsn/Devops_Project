@@ -123,7 +123,7 @@ helm upgrade --install loki grafana/loki-stack --namespace monitoring \
   --set promtail.resources.limits.memory="256Mi"
 
 # SECURITY
-helm upgrade --install kyverno kyverno/kyverno --namespace security \
+helm upgrade --install kyverno kyverno/kyverno  \
     --set persistence.mountPath="$VOLUME_DIR/kyverno" \
     --set resources.requests.cpu="50m" \
     --set resources.requests.memory="128Mi" \
