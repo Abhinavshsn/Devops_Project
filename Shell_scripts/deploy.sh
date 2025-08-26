@@ -100,7 +100,7 @@ helm uninstall grafana -n monitoring
 helm upgrade --install grafana grafana/grafana --namespace monitoring \
   --set persistence.existingClaim="" \
   --set persistence.mountPath="$VOLUME_DIR/grafana" \
-  --set nodeSelector."monitoring"="true" \
+#  --set nodeSelector."monitoring"="true" \
   --set resources.requests.cpu="100m" \
   --set resources.requests.memory="256Mi" \
   --set resources.limits.cpu="250m" \
@@ -114,7 +114,7 @@ helm upgrade --install loki grafana/loki-stack --namespace monitoring \
   --set promtail.extraVolumes[0].hostPath.path="$VOLUME_DIR/promtail" \
   --set promtail.extraVolumeMounts[0].name="promtail-data" \
   --set promtail.extraVolumeMounts[0].mountPath="$VOLUME_DIR/promtail" \
-#  --set nodeSelector."monitoring"="true" \
+  --set nodeSelector."monitoring"="true" \
   --set loki.resources.requests.cpu="200m" \
   --set loki.resources.requests.memory="512Mi" \
   --set loki.resources.limits.cpu="400m" \
