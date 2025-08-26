@@ -106,9 +106,10 @@ export KUBESHARK_TAG=v52.8.0  # update version if needed
 kubectl apply -f https://raw.githubusercontent.com/kubeshark/kubeshark/master/manifests/complete.yaml
 
 
-# Wait for Kubeshark pods to be ready
+# Wait for Kubeshark pods in the correct namespace
 echo "[INFO] Waiting for Kubeshark pods to be ready..."
-kubectl -n kubeshark wait --for=condition=ready pod --all --timeout=180s
+kubectl wait --for=condition=ready pod --all -n kubeshark --timeout=300s
+
 
 
 # -------------------------
