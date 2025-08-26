@@ -160,6 +160,9 @@ fi
 # Validate cluster pre-install
 linkerd check --pre || true
 
+# Install Linkerd CRDs first
+linkerd install --crds | kubectl apply -f -
+
 # Install Linkerd control plane
 linkerd install | kubectl apply -f -
 
