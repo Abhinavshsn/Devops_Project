@@ -100,7 +100,6 @@ helm uninstall grafana -n monitoring
 helm upgrade --install grafana grafana/grafana --namespace monitoring \
   --set persistence.existingClaim="" \
   --set persistence.mountPath="$VOLUME_DIR/grafana" \
-#  --set nodeSelector."monitoring"="true" \
   --set resources.requests.cpu="100m" \
   --set resources.requests.memory="256Mi" \
   --set resources.limits.cpu="250m" \
