@@ -18,7 +18,7 @@ VOLUME_DIR="/home/abhinav/devops-volumes"
 NAMESPACES=("cicd" "monitoring" "service" "network" "application")
 
 # TOOLS per namespace
-declare -A TOOLS
+declare -A TOOLS #Associative array with key as namespace and value as space-separated tools
 TOOLS=( 
     ["cicd"]="jenkins argo"
     ["monitoring"]="prometheus grafana loki node-exporter"
@@ -147,7 +147,7 @@ helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx --namespace net
 
 
 # -------------------------
-# SERVICE MESH: Linkerd CLI
+# SERVICE MESH: Linkerd CLI Linkerd doesn't support helm,so doing it using cli
 # -------------------------
 echo "[INFO] Installing Linkerd via CLI..."
 
