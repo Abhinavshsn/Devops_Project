@@ -19,9 +19,16 @@ echo "[INFO] Installing cert-manager..."
 kubectl create namespace $CERT_MANAGER_NAMESPACE || true
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
 kubectl wait --for=condition=available --timeout=180s deployment -n $CERT_MANAGER_NAMESPACE --all
+echo "[INFO] Waiting for cert-manager webhook TLS to be ready..."
+sleep 20
 
 echo "[INFO] Creating ClusterIssuer for self-signed certs..."
-cat <<EOF | kubectl apply -f -
+for i in {1..5}; do
+  cat <<EOF | kubectl apply -f - && break || 
+  {
+    echo "[WARN] ClusterIssuer creation failed, retrying in 10s... (attempt $i/5)"
+    sleep 10
+  }
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -29,6 +36,7 @@ metadata:
 spec:
   selfSigned: {}
 EOF
+done
 
 echo "[INFO] Creating Ingress resources for selected tools..."
 
