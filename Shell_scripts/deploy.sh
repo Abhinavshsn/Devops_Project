@@ -29,16 +29,25 @@ TOOLS=(
     ["application"]="my-java-app"
 )
 
-# CREATE KIND CONFIG FILE
+# CREATE KIND CONFIG FILE WITH RESOURCE LIMITS
 cat <<EOF > $KIND_CONFIG_FILE
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
   - role: control-plane
+    resources:
+      cpu: "1"
+      memory: "2GB"
   - role: worker
+    resources:
+      cpu: "1"
+      memory: "2GB"
   - role: worker
-  - role: worker
+    resources:
+      cpu: "1"
+      memory: "2GB"
 EOF
+
 
 echo "[INFO] Creating Kind cluster..."
 kind create cluster --name $CLUSTER_NAME --config $KIND_CONFIG_FILE || echo "[INFO] Cluster may already exist"
@@ -67,25 +76,41 @@ echo "[INFO] Installing tools..."
 helm upgrade --install jenkins jenkins/jenkins --namespace cicd \
     --set persistence.existingClaim="" \
     --set persistence.mountPath="$VOLUME_DIR/jenkins" \
-    --set nodeSelector.cicd=true
+    --set nodeSelector.cicd=true \
+    --set resources.requests.cpu="250m" \
+    --set resources.requests.memory="512Mi" \
+    --set resources.limits.cpu="500m" \
+    --set resources.limits.memory="1Gi"
 
 helm upgrade --install argo argo/argo-cd --namespace cicd \
     --set server.extraVolumeMounts[0].mountPath="$VOLUME_DIR/argocd" \
     --set server.extraVolumeMounts[0].name="argocd-data" \
     --set server.extraVolumes[0].name="argocd-data" \
     --set server.extraVolumes[0].hostPath.path="$VOLUME_DIR/argocd" \
-    --set nodeSelector.cicd=true
+    --set nodeSelector.cicd=true \
+    --set server.resources.requests.cpu="100m" \
+    --set server.resources.requests.memory="256Mi" \
+    --set server.resources.limits.cpu="250m" \
+    --set server.resources.limits.memory="512Mi"
 
 # MONITORING
 helm upgrade --install prometheus prometheus-community/prometheus --namespace monitoring \
   --set server.persistentVolume.existingClaim="" \
   --set server.persistentVolume.mountPath="$VOLUME_DIR/prometheus" \
-  --set nodeSelector.monitoring=true
+  --set nodeSelector.monitoring=true \
+  --set server.resources.requests.cpu="250m" \
+  --set server.resources.requests.memory="512Mi" \
+  --set server.resources.limits.cpu="500m" \
+  --set server.resources.limits.memory="1Gi"
 
 helm upgrade --install grafana grafana/grafana --namespace monitoring \
   --set persistence.existingClaim="" \
   --set persistence.mountPath="$VOLUME_DIR/grafana" \
-  --set nodeSelector.monitoring=true
+  --set nodeSelector.monitoring=true \
+  --set resources.requests.cpu="100m" \
+  --set resources.requests.memory="256Mi" \
+  --set resources.limits.cpu="250m" \
+  --set resources.limits.memory="512Mi"
 
 helm upgrade --install loki grafana/loki-stack --namespace monitoring \
   --set persistence.enabled=true \
@@ -95,18 +120,34 @@ helm upgrade --install loki grafana/loki-stack --namespace monitoring \
   --set promtail.extraVolumes[0].hostPath.path="$VOLUME_DIR/promtail" \
   --set promtail.extraVolumeMounts[0].name="promtail-data" \
   --set promtail.extraVolumeMounts[0].mountPath="$VOLUME_DIR/promtail" \
-  --set nodeSelector.monitoring=true
+  --set nodeSelector.monitoring=true \
+  --set loki.resources.requests.cpu="200m" \
+  --set loki.resources.requests.memory="512Mi" \
+  --set loki.resources.limits.cpu="400m" \
+  --set loki.resources.limits.memory="1Gi" \
+  --set promtail.resources.requests.cpu="50m" \
+  --set promtail.resources.requests.memory="128Mi" \
+  --set promtail.resources.limits.cpu="100m" \
+  --set promtail.resources.limits.memory="256Mi"
 
 # SECURITY
 helm upgrade --install kyverno kyverno/kyverno --namespace security \
-    --set persistence.mountPath="$VOLUME_DIR/kyverno"
+    --set persistence.mountPath="$VOLUME_DIR/kyverno" \
+    --set resources.requests.cpu="50m" \
+    --set resources.requests.memory="128Mi" \
+    --set resources.limits.cpu="100m" \
+    --set resources.limits.memory="256Mi"
 
 # NETWORK
 helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx --namespace network \
     --set controller.extraVolumeMounts[0].mountPath="$VOLUME_DIR/nginx" \
     --set controller.extraVolumeMounts[0].name="nginx-data" \
     --set controller.extraVolumes[0].name="nginx-data" \
-    --set controller.extraVolumes[0].hostPath.path="$VOLUME_DIR/nginx"
+    --set controller.extraVolumes[0].hostPath.path="$VOLUME_DIR/nginx" \
+    --set controller.resources.requests.cpu="50m" \
+    --set controller.resources.requests.memory="128Mi" \
+    --set controller.resources.limits.cpu="100m" \
+    --set controller.resources.limits.memory="256Mi"
 
 # INSPECTION: Kubeshark
 echo "[INFO] Installing Kubeshark..."
