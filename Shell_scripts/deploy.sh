@@ -114,7 +114,7 @@ helm upgrade --install loki grafana/loki-stack --namespace monitoring \
   --set promtail.extraVolumes[0].hostPath.path="$VOLUME_DIR/promtail" \
   --set promtail.extraVolumeMounts[0].name="promtail-data" \
   --set promtail.extraVolumeMounts[0].mountPath="$VOLUME_DIR/promtail" \
-  --set nodeSelector."monitoring"="true" \
+#  --set nodeSelector."monitoring"="true" \
   --set loki.resources.requests.cpu="200m" \
   --set loki.resources.requests.memory="512Mi" \
   --set loki.resources.limits.cpu="400m" \
