@@ -142,19 +142,6 @@ helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx --namespace net
     --set controller.resources.limits.cpu="100m" \
     --set controller.resources.limits.memory="256Mi"
 
-# INSPECTION: Kubeshark
-echo "[INFO] Installing Kubeshark..."
-export KUBESHARK_TAG=v52.8.0  # update version if needed
-kubectl apply -f https://raw.githubusercontent.com/kubeshark/kubeshark/master/manifests/complete.yaml
-
-
-# Wait for Kubeshark pods in the correct namespace
-' : kubectl get deployments -n kubeshark
-echo "[INFO] Waiting for Kubeshark deployments to be ready..."
-kubectl wait --for=condition=available deployment/kubeshark-front -n kubeshark --timeout=300s
-kubectl wait --for=condition=available deployment/kubeshark-hub -n kubeshark --timeout=300s
-kubectl wait --for=condition=available deployment/kubeshark-worker -n kubeshark --timeout=300s : '
-
 
 # -------------------------
 # SERVICE MESH: Linkerd CLI
