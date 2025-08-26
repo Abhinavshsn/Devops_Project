@@ -1,13 +1,21 @@
 #!/bin/bash
 set -e
 
+LOG_FILE="$HOME/devops_setup_$(date +%Y%m%d_%H%M%S).log"
+exec > >(tee -a "$LOG_FILE") 2>&1
+
+echo "============================="
+echo "DevOps cluster setup started"
+echo "Log file: $LOG_FILE"
+echo "============================="
+
 # VARIABLES
 CLUSTER_NAME="devops-cluster"
 KIND_CONFIG_FILE="kind-config.yaml"
 VOLUME_DIR="/home/abhinav/devops-volumes"
 
 # NAMESPACES
-NAMESPACES=("cicd" "monitoring" "security" "service" "network" "inspection" "application")
+NAMESPACES=("cicd" "monitoring" "service" "network" "application")
 
 # TOOLS per namespace
 declare -A TOOLS
@@ -92,8 +100,15 @@ helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx --namespace net
     --set controller.extraVolumes[0].name="nginx-data" \
     --set controller.extraVolumes[0].hostPath.path="$VOLUME_DIR/nginx"
 
-# INSPECTION
-kubectl apply -f https://kubeshark.github.io/kubeshark/kubeshark.yaml -n inspection
+# INSPECTION: Kubeshark
+echo "[INFO] Installing Kubeshark..."
+export KUBESHARK_TAG=v52.8.0  # update version if needed
+kubectl apply -f https://raw.githubusercontent.com/kubeshark/kubeshark/refs/$KUBESHARK_TAG/manifests/complete.yaml
+
+# Wait for Kubeshark pods to be ready
+echo "[INFO] Waiting for Kubeshark pods to be ready..."
+kubectl -n kubeshark wait --for=condition=ready pod --all --timeout=180s
+
 
 # -------------------------
 # SERVICE MESH: Linkerd CLI
