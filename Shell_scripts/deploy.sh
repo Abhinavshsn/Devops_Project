@@ -137,6 +137,9 @@ helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx --namespace net
     --set controller.extraVolumeMounts[0].name="nginx-data" \
     --set controller.extraVolumes[0].name="nginx-data" \
     --set controller.extraVolumes[0].hostPath.path="$VOLUME_DIR/nginx" \
+    --set controller.service.type=NodePort \
+    --set controller.service.nodePorts.http=30080 \
+    --set controller.service.nodePorts.https=30443 \
     --set controller.resources.requests.cpu="50m" \
     --set controller.resources.requests.memory="128Mi" \
     --set controller.resources.limits.cpu="100m" \
