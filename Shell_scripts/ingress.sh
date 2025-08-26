@@ -24,11 +24,7 @@ sleep 20
 
 echo "[INFO] Creating ClusterIssuer for self-signed certs..."
 for i in {1..5}; do
-  cat <<EOF | kubectl apply -f - && break || 
-  {
-    echo "[WARN] ClusterIssuer creation failed, retrying in 10s... (attempt $i/5)"
-    sleep 10
-  }
+  cat <<EOF | kubectl apply -f - && break 
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -36,6 +32,8 @@ metadata:
 spec:
   selfSigned: {}
 EOF
+  echo "[WARN] ClusterIssuer creation failed, retrying in 10s... (attempt $i/5)"
+  sleep 10
 done
 
 echo "[INFO] Creating Ingress resources for selected tools..."
