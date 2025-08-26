@@ -96,6 +96,7 @@ helm upgrade --install prometheus prometheus-community/prometheus --namespace mo
   --set server.resources.limits.cpu="500m" \
   --set server.resources.limits.memory="1Gi"
 
+helm uninstall grafana -n monitoring
 helm upgrade --install grafana grafana/grafana --namespace monitoring \
   --set persistence.existingClaim="" \
   --set persistence.mountPath="$VOLUME_DIR/grafana" \
